@@ -21,6 +21,7 @@ function addTodo() {
     allTodo.push(todoText);
     //lauch new function that isn't even created yet. i hate when youtube tutorials do this, because, they already have it finished or idk if they are thinking 20 steps forward. well they did this 100 times so yeah
     unpdateTodoList(); // whats the task im giving? what data and i giving? the text value !!!!
+    saveTodos();
     todoInput.value = " ";
   }
 }
@@ -78,4 +79,12 @@ function createTodoItem(todo, todoIndex) {
           </button>
   `;
   return todoLI;
+}
+
+function saveTodos() {
+  // going to keep this test line here
+  localStorage.setItem("test", "1233");
+  // now , how am i suppose to save each item on the local storage.. im thinkig localStorage.updateTodoList()   and call the funciton again but here?? idk
+  const todoJson = JSON.stringify(allTodo);
+  localStorage.setItem("todo", todoJson);
 }
