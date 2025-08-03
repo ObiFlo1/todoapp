@@ -2,7 +2,9 @@ const todoform = document.querySelector("form");
 const todoInput = document.getElementById("todo-input");
 const todoListUL = document.getElementById("todo-list");
 
-let allTodo = []; // 'let' is a variable that can be changed/ updated with new information. you want to make an empty arrary, usually when you want to push items in them. so adding items to the screen.
+// let allTodo = []; // 'let' is a variable that can be changed/ updated with new information. you want to make an empty arrary, usually when you want to push items in them. so adding items to the screen.
+let allTodo = getTodos();
+unpdateTodoList();
 
 todoform.addEventListener("submit", function (e) {
   // the event listener so when you click on the button, it performs a function/action. in this case the 'submit' function.
@@ -18,7 +20,12 @@ function addTodo() {
   //push item to allTOdo
   const todoText = todoInput.value.trim(); // this line saves the users input. from line 23 in html file <input> tag
   if (todoText.length > 0) {
-    allTodo.push(todoText);
+    const todoObject = {
+      text: todoText,
+      completed: false,
+    };
+    // allTodo.push(todoText);
+    allTodo.push(todoObject);
     //lauch new function that isn't even created yet. i hate when youtube tutorials do this, because, they already have it finished or idk if they are thinking 20 steps forward. well they did this 100 times so yeah
     unpdateTodoList(); // whats the task im giving? what data and i giving? the text value !!!!
     saveTodos();
@@ -39,6 +46,7 @@ function createTodoItem(todo, todoIndex) {
   const todoLI = document.createElement("li");
   //i bet im going to use the 'todo' task in a userInput(todo) something like that. bc in line 23 in the html file its an <input> tag
   //   todoLI.innerText = todo; // see
+  const todoText = todo.text; // am i using the object from another function? i don't think that can work
   todoLI.className = "todo";
   todoLI.innerHTML = `
    <input
@@ -61,7 +69,7 @@ function createTodoItem(todo, todoIndex) {
           <label
             for="${todoId}"
             class="todo-text"
-            >${todo}</label
+            >${todoText}</label
           >
           <button class="delete-button">
             <svg
@@ -78,7 +86,24 @@ function createTodoItem(todo, todoIndex) {
             </svg>
           </button>
   `;
+
+  const deleteButton = todoLI.querySelector(".delete-button");
+  deleteButton.addEventListener("click", () => {
+    deleteTodoItem(todoIndex);
+  });
+  const checkbox = todoLI.querySelector("input");
+  checkbox.addEventListener("check", () => {
+    allTodo[todoIndex].completed = checkbox.checked; // i don't get this code at all
+    saveTodos();
+  });
+  checkbox.checked = todo.completed;
   return todoLI;
+}
+
+function deleteTodoItem(todoIndex) {
+  allTodo = allTodo.filter((_, i) => i !== todoIndex); //i don't know this at all
+  saveTodos(); //i know what it does, but why put it here.
+  unpdateTodoList(); //try to understand why we put this everywhere
 }
 
 function saveTodos() {
@@ -87,4 +112,9 @@ function saveTodos() {
   // now , how am i suppose to save each item on the local storage.. im thinkig localStorage.updateTodoList()   and call the funciton again but here?? idk
   const todoJson = JSON.stringify(allTodo);
   localStorage.setItem("todo", todoJson);
+}
+
+function getTodos() {
+  const todos = localStorage.getItem("todos") || "[]";
+  return JSON.parse(todos);
 }
